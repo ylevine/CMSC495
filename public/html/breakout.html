@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="UTF-8"> 
+		<title>JS Breakout - Play Game</title>
+				
+		<link rel="stylesheet" type="text/css" href="../css/main.css">
+		<link rel="stylesheet" type="text/css" href="../css/nav.css">
+		<link rel="stylesheet" type="text/css" href="../css/breakout.css">
+		
+	    <script src="../js/Breakout.js" type="text/javascript"></script>
+	</head>
+
+	<body>
+		<h1>BREAKOUT IN JAVASCRIPT</h1>		
+		<div class="liquid_wrapper">
+			<div id="nav_main" class ="link_plain">
+				<ul>					
+					<li><a href="index.html">Home</a></li>
+					<li><a href="breakout.html">Play Game</a></li>
+					<li><a href="help.html">Help</a></li>
+				</ul>
+			</div>
+			
+			<div class="liquid_container">
+				
+				<div class="center">
+					<h2><label id="lblScore">Score: 0</label></h2>
+				</div>
+				<div class="center">
+					<canvas id="canvasMain" width="640" height="480" onclick="toggleStartStop()">				
+					</canvas><br>
+				</div>			
+				<div class="center">
+					<input type="button" id="btnCheat" value="Enable Cheats" onclick="toggleCheat()">
+				</div>
+				<div class="center">
+					Click on the game to start or stop playing.
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+
+

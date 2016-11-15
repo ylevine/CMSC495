@@ -1,0 +1,26 @@
+#nav_main ul{	
+	list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;    
+	background-color: rgba(150, 255, 220, 0.5);
+}
+#nav_main li{
+	float: left;
+}
+#nav_main li a{
+	display: block;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-weight: bold;
+}
+#nav_main li a:hover{
+	background-color: #FF03CD;
+	font-weight: bold;	
+}
+.link_current li{
+	background-color: #BA0095;
+	font-weight: bold;
+}
