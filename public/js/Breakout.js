@@ -20,7 +20,7 @@ const MAX_BALL_SPEED =3;
 //Bricks 
 const BRICK_WIDTH = 60;
 const BRICK_HEIGHT = 20;
-const BRICK_ROWS = 8;
+const BRICK_PADDING = 4;
 
 const BRICK_COLORS = ["#107EDE","#FFFF00","#FF0000"];
 
@@ -31,6 +31,7 @@ var gameLoopHandle; //Game loop handle
 var scoreLabel; //Label for updating the score
 var score =0; //The actual score value
 var lives = 3; //Number of lives the player has
+var level = 1;
 
 //Game entities
 var ball; //The ball
@@ -278,7 +279,7 @@ function destroyBrick(targetBrick){ //Destroy a targeted brick
 	}
 	
 	if (CHEAT_ON) {
-		score+=targetBrick.hp;
+		score+=targetBrick.hp+1;
 	}
 	else {
 		score++;
@@ -303,16 +304,15 @@ function calcDistance(x1, x2, y1, y2){ //Calculate the distance of two objects
 
 function createBricks(){ //Create the brick objects
 	var brickCounter =0;
-	var space =4;
-	var yPos = 2;
+	var yPos = 46;
 	var hp=0;
 	
-	for(var rowCounter=0; rowCounter < BRICK_ROWS; rowCounter ++){
+	for(var rowCounter=0; rowCounter < 6; rowCounter++){
 		
-		var xPos = 2;
-		hp=rowCounter%3;
+		var xPos = 66;
+		hp=(rowCounter+2)%3;
 		
-		for(var colCounter=0; colCounter < 10; colCounter++){
+		for(var colCounter=0; colCounter < 8; colCounter++){
 			var createBrick = new Brick();
 			createBrick.setPosition(xPos, yPos);
 			createBrick.index = brickCounter;
@@ -321,10 +321,10 @@ function createBricks(){ //Create the brick objects
 			brick[brickCounter] = createBrick;
 			
 			brickCounter ++;
-			xPos += space + BRICK_WIDTH;
+			xPos += BRICK_PADDING + BRICK_WIDTH;
 		}
 		
-		yPos += space + BRICK_HEIGHT;
+		yPos += BRICK_PADDING + BRICK_HEIGHT;
 	}	
 }
 
