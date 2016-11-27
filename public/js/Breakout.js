@@ -13,7 +13,7 @@ const PADDLE_COLOR = "#1ED99B";
 const BALL_RADIUS = 10; //Radius of the ball
 const BALL_START_X = PADDLE_START_X + (PADDLE_WIDTH/2);
 const BALL_START_Y = PADDLE_START_Y - BALL_RADIUS;
-const BALL_START_VELX = 0;
+const BALL_START_VELX = 1;
 const BALL_START_VELY = -3;
 const BALL_COLOR = "#FF03CD";
 const MAX_BALL_SPEED =3;
@@ -109,7 +109,7 @@ function newGame() { //Setup a new game
 	lives =3;
 	updateScore();
 	
-	initObjects()
+	initObjects();
 	
 	document.addEventListener("mousemove", mouseMoveHandler, false);
 }
@@ -217,7 +217,7 @@ function applyPaddle(){ //Apply the paddle physics to the ball
 }
 
 function applyBrick(){ //Apply the brick physics
-	var nearBrick; //The closest brick to the ball
+	var nearBrickIndex; //The closest brick to the ball
 	var currentDistance = VIEWPORT_WIDTH *2;
 		
 	for(var counter =0; counter < brick.length; counter++){ //Loop over all the bricks and find the nearest brick
@@ -226,53 +226,51 @@ function applyBrick(){ //Apply the brick physics
 		 
 		 if(distance < currentDistance){
 		 	currentDistance = distance;
-		 	nearBrick = currentBrick;
+		 	nearBrickIndex = counter;
 		 }
 	}
-		
-	collideBrick(nearBrick);
+	
+	collideBrick(nearBrickIndex);
 }
 
-function collideBrick(nearBrick){ //Check for a collision with the nearest brick	
+function collideBrick(nearBrickIndex){ //Check for a collision with the nearest brick	
 	
-	var distTop = calcDistance(ball.x, ball.x, ball.y, nearBrick.top) - ball.radius;
-	var distBottom = calcDistance(ball.x, ball.x, ball.y, nearBrick.bottom) - ball.radius; 
-	var distLeft = calcDistance(ball.x, nearBrick.left, ball.y, ball.y) - ball.radius;
-	var distRight = calcDistance(ball.x, nearBrick.right, ball.y, ball.y) - ball.radius;
+	var nearBrick = brick[nearBrickIndex];
+	
+	var distTop = calcDistance(ball.x, ball.x, ball.y, nearBrick.top);
+	var distBottom = calcDistance(ball.x, ball.x, ball.y, nearBrick.bottom); 
+	var distLeft = calcDistance(ball.x, nearBrick.left, ball.y, ball.y);
+	var distRight = calcDistance(ball.x, nearBrick.right, ball.y, ball.y);
 	
 	if(distLeft <= nearBrick.width && distRight <= nearBrick.width){ //Check for top and bottom collision
-		if(distBottom <= 0 || distTop <=0){
+		if(distBottom - ball.radius <= 0 || distTop - ball.radius <=0){
 			if(!CHEAT_ON){
 				ball.velY = -ball.velY;	
 			}
-			destroyBrick(nearBrick);
+			destroyBrick(nearBrickIndex);
 		}
 	}
-	else if(distTop <= nearBrick.top && distBottom <= nearBrick.bottom){ //Check for left or right collision
-		if(distLeft <=0 || distRight <=0){
+	else if(distTop <= nearBrick.height && distBottom <= nearBrick.height){ //Check for left or right collision
+		if(distLeft - ball.radius <=0 || distRight - ball.radius <=0){
 			if(!CHEAT_ON){
 				ball.velX = -ball.velX;
 			}
-			destroyBrick(nearBrick);
+			destroyBrick(nearBrickIndex);
 		}
 	}	
 }
 
-function destroyBrick(targetBrick){ //Destroy a targeted brick
+function destroyBrick(targetBrickIndex){ //Destroy a targeted brick
 
+	var targetBrick = brick[targetBrickIndex];
+	
 	if (!CHEAT_ON && targetBrick.hp>0) {
 		targetBrick.color=BRICK_COLORS[--targetBrick.hp];
 	}
 	else {
-		brick.splice(targetBrick.index, 1);
+		brick.splice(targetBrickIndex, 1);
 		
-		if(brick.length >0){
-			//Update the brick indices
-			for(var counter=0; counter < brick.length; counter++){
-				brick[counter].index = counter;
-			}
-		}
-		else{
+		if(brick.length == 0){
 			gameWon = true;
 			gameOver = true;
 		}
@@ -303,7 +301,6 @@ function calcDistance(x1, x2, y1, y2){ //Calculate the distance of two objects
 }
 
 function createBricks(){ //Create the brick objects
-	var brickCounter =0;
 	var yPos = 46;
 	var hp=0;
 	
@@ -313,14 +310,7 @@ function createBricks(){ //Create the brick objects
 		hp=(rowCounter+2)%3;
 		
 		for(var colCounter=0; colCounter < 8; colCounter++){
-			var createBrick = new Brick();
-			createBrick.setPosition(xPos, yPos);
-			createBrick.index = brickCounter;
-			createBrick.hp = hp;
-			createBrick.color = BRICK_COLORS[hp];
-			brick[brickCounter] = createBrick;
-			
-			brickCounter ++;
+			brick.push(new Brick(xPos, yPos, hp));
 			xPos += BRICK_PADDING + BRICK_WIDTH;
 		}
 		
@@ -417,24 +407,29 @@ var Ball = function(){ //The ball object
 	this.velY = BALL_START_VELY;
 	//Properties of the ball
 	this.radius = BALL_RADIUS;
-	this.index =-1; //Index of the brick in the array
 };
 Ball.prototype = new Entity();
 Ball.prototype.drawEntity = function(){
 	drawCircle(this.x, this.y, this.radius, this.color);
 };
 
-var Brick = function(){ //Brick object
+var Brick = function(x, y, hp){ //Brick object
 	this.width = BRICK_WIDTH;
 	this.height = BRICK_HEIGHT;
-	//Center of the brick
-	this.centerX=0;
-	this.centerY=0;
-	//Edges of the brick
-	this.left = 0;
-	this.right = 0;
-	this.top =0;
-	this.bottom =0;
+	
+	this.x = x;
+	this.y = y;
+	//Set the center
+	this.centerX = (this.width /2) + this.x;
+	this.centerY = (this.height /2) + this.y;
+	//Set the edges
+	this.left = this.x;
+	this.right = this.x + this.width;
+	this.top = this.y;
+	this.bottom = this.y + this.height;
+	
+	this.hp=hp;
+	this.color=BRICK_COLORS[hp];
 };
 Brick.prototype = new Entity();
 Brick.prototype.drawEntity = function(){
