@@ -29,6 +29,7 @@ var draw; //Raster object for drawing
 var viewPort; //Canvas to draw on
 var gameLoopHandle; //Game loop handle
 var scoreLabel; //Label for updating the score
+var livesLabel; //Label for trackering the remaining lives
 var score =0; //The actual score value
 var lives = 3; //Number of lives the player has
 var level = 1;
@@ -79,12 +80,10 @@ function gameEnded(){ //End the game due to a condition
 	if(gameWon){
 		alert("Game Won");
 	}
-	else if (--lives >0) {
-		alert("Lives: "+lives);
+	else if (--lives == 0) {
+		alert("Game Over");
 	}
-	else{
-		alert("Lives: "+lives+"\nGame Over");
-	}
+	updateLives();
 	stopGame();		
 }
 
@@ -96,6 +95,7 @@ function newGame() { //Setup a new game
 	viewPort.style.backgroundColor = VIEWPORT_COLOR;
 	
 	scoreLabel = document.getElementById("lblScore");
+	livesLabel = document.getElementById("lblLives");
 	
 	draw = viewPort.getContext("2d");
 	
@@ -103,11 +103,13 @@ function newGame() { //Setup a new game
 	ball = new Ball();
 	paddle = new Paddle();
 	
+	brick = [];
 	createBricks();
 	
 	score =0;
 	lives =3;
 	updateScore();
+	updateLives();
 	
 	initObjects();
 	
@@ -343,6 +345,10 @@ function drawCircle(x, y, radius, color){ //Draw a circle
 
 function updateScore(){ //Update the score
 	scoreLabel.innerHTML = "Score: " + score.toString();
+}
+
+function updateLives(){ //Update the lives
+	livesLabel.innerHTML = "Lives: " + lives.toString();
 }
 
 function toggleCheat(){ //Toggle the cheats on and off
