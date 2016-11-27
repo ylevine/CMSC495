@@ -7,10 +7,14 @@ body{
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
-	background-image: url("../img/shatter2.png"), radial-gradient(circle, #05335C, #CEDFED);
+	background-image: url("../img/blueFlooring.jpg"), radial-gradient(circle, #05335C, #CEDFED);
+	
+	
+	
 }
 body a:link{
 	text-decoration: none;
+	font: 120% Arial, Arial Black , Geneva, sans-serif;
 }
 body a:visited{
 	text-decoration: none;
@@ -22,14 +26,45 @@ body a:active{
 	text-decoration: none;
 }
 h1{
+	font: 200% Arial, Arial Black , Geneva, sans-serif;
 	text-align: center;
-	color: rgba(156, 209, 255, 0.5);
+	color: rgba(0, 20, 255, 1.0);
+	font-weight: bold;
 }
 h2{
-	color: #0E5796;
+	font: 125% Arial, Arial Black , Geneva, sans-serif;
+	color: rgba(0, 20, 255, 1.0);
+	text-align: center;
 }
+
+h3{
+	font: 100% Arial, Arial Black , Geneva, sans-serif;
+	color: rgba(0, 20, 255, 1.0);
+	text-align: center;
+}
+
+h4{
+	font: 125% Arial, Arial Black , Geneva, sans-serif;
+	color: rgba(0, 20, 255, 1.0);
+	text-align: left;
+	font-weight: bold;
+}
+
+h5{
+	font: 100% Arial, Arial Black , Geneva, sans-serif;
+	color: rgba(0, 20, 255, 1.0);
+	text-align: left;
+	
+	
+}
+
+h6{
+	font: 90% Arial, Arial Black , Geneva, sans-serif;
+	text-align: left;
+}
+
 .liquid_wrapper{
-	background-color: rgba(30, 217, 155, 0.5);
+	background-color: rgba(30, 217, 155, 0.7);
 	color: #FFFFFF;
 	
 	width: 60%;
@@ -39,15 +74,15 @@ h2{
 	border-bottom-left-radius: 25px;
 	border-bottom-right-radius: 25px;
 	
-	border: 2px solid rgba(150, 255, 220, 0.5);	
-	box-shadow: 10px 10px 5px rgba(150, 255, 220, 0.5);
+	border: 2px solid rgba(150, 255, 220, 0.7);	
+	box-shadow: 5px 5px 5px rgba(150, 255, 220, 0.7);
 	
 }
 .liquid_container{
-	padding: 20px;
+	padding: 30px;
 }
 .liquid_container iframe{
-	padding-bottom: 20px;
+	padding-bottom: 30px;
 	display: block;
 }
 .center{
