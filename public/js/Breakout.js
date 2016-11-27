@@ -16,7 +16,7 @@ const BALL_START_Y = PADDLE_START_Y - BALL_RADIUS;
 const BALL_START_VELX = 1;
 const BALL_START_VELY = -3;
 const BALL_COLOR = "#FF03CD";
-const MAX_BALL_SPEED =3;
+const MAX_BALL_SPEED = 3;
 //Bricks 
 const BRICK_WIDTH = 60;
 const BRICK_HEIGHT = 20;
@@ -29,8 +29,8 @@ var draw; //Raster object for drawing
 var viewPort; //Canvas to draw on
 var gameLoopHandle; //Game loop handle
 var scoreLabel; //Label for updating the score
-var livesLabel; //Label for trackering the remaining lives
-var score =0; //The actual score value
+var livesLabel; //Label for tracking the remaining lives
+var score = 0; //The actual score value
 var lives = 3; //Number of lives the player has
 var level = 1;
 
@@ -43,6 +43,7 @@ var gameOver = false;
 var gameWon = false;
 var running = false;
 var CHEAT_ON = false; //Cheats to make things easier
+var lastBrickIndex; //The index of the last brick hit by the ball
 
 
 window.addEventListener("load", windowLoaded, false);
@@ -60,6 +61,7 @@ function toggleStartStop(){ //Toggle starting and stopping the game
 		stopGame();
 	}
 }
+
 function startGame(){ //Start the game
 	if(gameOver){
 		if (!gameWon && lives > 0) {
@@ -72,10 +74,12 @@ function startGame(){ //Start the game
 	gameLoopHandle = setInterval(gameLoop, FRAMES_PER_MILLISECOND); //Start the rendering loop and get its handle
 	running = true;
 }
+
 function stopGame(){ //Stop the game
 	clearInterval(gameLoopHandle);
 	running = false;
 }
+
 function gameEnded(){ //End the game due to a condition
 	if(gameWon){
 		alert("Game Won");
@@ -106,8 +110,8 @@ function newGame() { //Setup a new game
 	brick = [];
 	createBricks();
 	
-	score =0;
-	lives =3;
+	score = 0;
+	lives = 3;
 	updateScore();
 	updateLives();
 	
@@ -166,14 +170,17 @@ function applyBoundary(){ //Apply the boundaries to the ball
 	if(ball.x + ball.radius > VIEWPORT_WIDTH){
 		ball.x = VIEWPORT_WIDTH - ball.radius;
 		ball.velX = -ball.velX;
+		lastBrickIndex = null;
 	} 
 	else if(ball.x - ball.radius < 0){	
 		ball.x = ball.radius;
 		ball.velX = -ball.velX;
+		lastBrickIndex = null;
 	}
 	else if(ball.y - ball.radius < 0){
 		ball.y = ball.radius;
 		ball.velY = -ball.velY;
+		lastBrickIndex = null;
 	}
 	else if(ball.y + ball.radius > VIEWPORT_HEIGHT ){
 		if(!CHEAT_ON){
@@ -182,6 +189,7 @@ function applyBoundary(){ //Apply the boundaries to the ball
 		else{
 			ball.y = VIEWPORT_HEIGHT - ball.radius;
 			ball.velY = -ball.velY;
+			lastBrickIndex = null;
 		}
 	}
 }
@@ -195,6 +203,7 @@ function applyPaddle(){ //Apply the paddle physics to the ball
 		if(distTop <=0){ //and ball hit paddle
 			ball.y = paddle.top - ball.radius;
 			ball.velY = -ball.velY;
+			lastBrickIndex = null;
 			
 			var distCenterX = calcDistance(ball.x, paddle.centerX, ball.y, ball.y) *2;
 			var xScale = (distCenterX / paddle.width) * MAX_BALL_SPEED;
@@ -244,20 +253,26 @@ function collideBrick(nearBrickIndex){ //Check for a collision with the nearest 
 	var distLeft = calcDistance(ball.x, nearBrick.left, ball.y, ball.y);
 	var distRight = calcDistance(ball.x, nearBrick.right, ball.y, ball.y);
 	
-	if(distLeft <= nearBrick.width && distRight <= nearBrick.width){ //Check for top and bottom collision
+	if(distLeft <= nearBrick.width + BRICK_PADDING && distRight <= nearBrick.width + BRICK_PADDING){ //Check for top and bottom collision
 		if(distBottom - ball.radius <= 0 || distTop - ball.radius <=0){
-			if(!CHEAT_ON){
-				ball.velY = -ball.velY;	
+			if(CHEAT_ON || nearBrickIndex != lastBrickIndex){
+				if(!CHEAT_ON){
+					ball.velY = -ball.velY;	
+				}
+				destroyBrick(nearBrickIndex);
+				lastBrickIndex = nearBrickIndex;
 			}
-			destroyBrick(nearBrickIndex);
 		}
 	}
-	else if(distTop <= nearBrick.height && distBottom <= nearBrick.height){ //Check for left or right collision
+	else if(distTop <= nearBrick.height + BRICK_PADDING && distBottom <= nearBrick.height + BRICK_PADDING){ //Check for left or right collision
 		if(distLeft - ball.radius <=0 || distRight - ball.radius <=0){
-			if(!CHEAT_ON){
-				ball.velX = -ball.velX;
+			if(CHEAT_ON || nearBrickIndex != lastBrickIndex){
+				if(!CHEAT_ON){
+					ball.velX = -ball.velX;
+				}
+				destroyBrick(nearBrickIndex);
+				lastBrickIndex = nearBrickIndex;
 			}
-			destroyBrick(nearBrickIndex);
 		}
 	}	
 }
