@@ -13,16 +13,16 @@ const PADDLE_COLOR = "#1ED99B";
 const BALL_RADIUS = 10; //Radius of the ball
 const BALL_START_X = PADDLE_START_X + (PADDLE_WIDTH/2);
 const BALL_START_Y = PADDLE_START_Y - BALL_RADIUS;
-const BALL_START_VELX = 1;
-const BALL_START_VELY = -3;
 const BALL_COLOR = "#FF03CD";
-const MAX_BALL_SPEED = 3;
+const BALL_MIN_VEL = 3; //The minimum starting velocity of the ball
 //Bricks 
 const BRICK_WIDTH = 60;
 const BRICK_HEIGHT = 20;
 const BRICK_PADDING = 4;
-
+const BRICK_X = BRICK_WIDTH + BRICK_PADDING;
+const BRICK_Y = BRICK_HEIGHT + BRICK_PADDING;
 const BRICK_COLORS = ["#107EDE","#FFFF00","#FF0000"];
+const BRICK_LAYOUTS = [layout1, layout2];
 
 //Objects for handling the game
 var draw; //Raster object for drawing
@@ -30,9 +30,10 @@ var viewPort; //Canvas to draw on
 var gameLoopHandle; //Game loop handle
 var scoreLabel; //Label for updating the score
 var livesLabel; //Label for tracking the remaining lives
-var score = 0; //The actual score value
-var lives = 3; //Number of lives the player has
-var level = 1;
+var levelLabel; //Label for tracking the current level
+var score; //The actual score value
+var lives; //Number of lives the player has
+var level; //The current level
 
 //Game entities
 var ball; //The ball
@@ -43,6 +44,7 @@ var gameOver = false;
 var gameWon = false;
 var running = false;
 var CHEAT_ON = false; //Cheats to make things easier
+var maxBallVel; //The maximum velocity of the ball
 var lastBrickIndex; //The index of the last brick hit by the ball
 
 
@@ -50,7 +52,6 @@ window.addEventListener("load", windowLoaded, false);
 
 function windowLoaded(){ //After the window and elements have been loaded
 	newGame(); //Initialize the game
-	render();
 }
 
 function toggleStartStop(){ //Toggle starting and stopping the game
@@ -63,16 +64,16 @@ function toggleStartStop(){ //Toggle starting and stopping the game
 }
 
 function startGame(){ //Start the game
-	if(gameOver){
-		if (!gameWon && lives > 0) {
+	if(lives == 0) {
+		newGame();
+	}
+	else if(!gameWon) {
+		if(gameOver) {
 			initObjects();
 		}
-		else {
-			newGame();
-		}
+		gameLoopHandle = setInterval(gameLoop, FRAMES_PER_MILLISECOND); //Start the rendering loop and get its handle
+		running = true;
 	}
-	gameLoopHandle = setInterval(gameLoop, FRAMES_PER_MILLISECOND); //Start the rendering loop and get its handle
-	running = true;
 }
 
 function stopGame(){ //Stop the game
@@ -82,16 +83,24 @@ function stopGame(){ //Stop the game
 
 function gameEnded(){ //End the game due to a condition
 	if(gameWon){
-		alert("Game Won");
+		setTimeout(function(){
+			level++;
+			newLevel();
+			render();
+			drawText(280, 240, "Level: "+(level+1), "#FFFFFF");
+		}, 1000);
 	}
 	else if (--lives == 0) {
-		alert("Game Over");
+		drawText(270, 240, "Game Over", "#FF0000");
+	}
+	else {
+		drawText(280, 240, "Lives: "+lives, "#FFFFFF");
 	}
 	updateLives();
 	stopGame();		
 }
 
-function newGame() { //Setup a new game
+function newGame(){ //Setup a new game
 	//Get and set element and other related objects
 	viewPort = document.getElementById("canvasMain");
 	viewPort.width = VIEWPORT_WIDTH;
@@ -100,6 +109,7 @@ function newGame() { //Setup a new game
 	
 	scoreLabel = document.getElementById("lblScore");
 	livesLabel = document.getElementById("lblLives");
+	levelLabel = document.getElementById("lblLevel");
 	
 	draw = viewPort.getContext("2d");
 	
@@ -107,24 +117,35 @@ function newGame() { //Setup a new game
 	ball = new Ball();
 	paddle = new Paddle();
 	
-	brick = [];
-	createBricks();
-	
 	score = 0;
 	lives = 3;
+	level = 0;
+	
+	newLevel();
+	
 	updateScore();
 	updateLives();
 	
-	initObjects();
-	
 	document.addEventListener("mousemove", mouseMoveHandler, false);
+	
+	render();
+	drawText(280, 240, "Level: "+(level+1), "#FFFFFF");
+}
+
+function newLevel(){ //Create new brick layout and adjust maxBallVel for the current level
+	maxBallVel=BALL_MIN_VEL+(level*.5);
+	
+	brick = [];
+	createBricks();
+	initObjects();
+	updateLevel();
 }
 
 function initObjects(){ //Initialize the objects needed
 	ball.x = BALL_START_X;
 	ball.y = BALL_START_Y;
-	ball.velX = BALL_START_VELX;
-	ball.velY = BALL_START_VELY;
+	ball.velX = (Math.random() * maxBallVel * 2) - maxBallVel;
+	ball.velY = -maxBallVel;
 	ball.color = BALL_COLOR;
 	
 	paddle.updateX(PADDLE_START_X);
@@ -189,8 +210,8 @@ function applyBoundary(){ //Apply the boundaries to the ball
 		else{
 			ball.y = VIEWPORT_HEIGHT - ball.radius;
 			ball.velY = -ball.velY;
-			lastBrickIndex = null;
 		}
+		lastBrickIndex = null;
 	}
 }
 
@@ -206,7 +227,7 @@ function applyPaddle(){ //Apply the paddle physics to the ball
 			lastBrickIndex = null;
 			
 			var distCenterX = calcDistance(ball.x, paddle.centerX, ball.y, ball.y) *2;
-			var xScale = (distCenterX / paddle.width) * MAX_BALL_SPEED;
+			var xScale = (distCenterX / paddle.width) * maxBallVel;
 						
 			if(ball.x > paddle.centerX){
 				ball.velX += xScale;
@@ -215,12 +236,12 @@ function applyPaddle(){ //Apply the paddle physics to the ball
 				ball.velX -= xScale;
 			}			
 			
-			if(Math.abs(ball.velX) > MAX_BALL_SPEED){
+			if(Math.abs(ball.velX) > maxBallVel){
 				if(ball.velX >0){
-					ball.velX = MAX_BALL_SPEED;
+					ball.velX = maxBallVel;
 				}
 				else{
-					ball.velX = -MAX_BALL_SPEED;
+					ball.velX = -maxBallVel;
 				}
 			}
 		}
@@ -317,25 +338,84 @@ function calcDistance(x1, x2, y1, y2){ //Calculate the distance of two objects
 	return Math.sqrt(x2x1 + y2y1);
 }
 
-function createBricks(){ //Create the brick objects
-	var yPos = 46;
+function createBricks(){ //Select and create the brick layout
+	BRICK_LAYOUTS[(level%BRICK_LAYOUTS.length)]();
+}
+
+function layout0(){ //Create the brick objects - test layout, not used
+	var yPos = 2;
+	var hp=0;
+	
+	for(var rowCounter=0; rowCounter < 8; rowCounter ++){
+		var xPos = 2;
+		
+		for(var colCounter=0; colCounter < 10; colCounter++){
+			brick.push(new Brick(xPos, yPos, hp));
+			xPos += BRICK_X;
+		}
+		
+		yPos += BRICK_Y;
+	}	
+}
+
+function layout1(){ //Create the brick objects
+	var yPos = 2 + BRICK_Y*2;
 	var hp=0;
 	
 	for(var rowCounter=0; rowCounter < 6; rowCounter++){
 		
-		var xPos = 66;
+		var xPos = 2 + BRICK_X;
 		hp=(rowCounter+2)%3;
 		
 		for(var colCounter=0; colCounter < 8; colCounter++){
 			brick.push(new Brick(xPos, yPos, hp));
-			xPos += BRICK_PADDING + BRICK_WIDTH;
+			xPos += BRICK_X;
 		}
 		
-		yPos += BRICK_PADDING + BRICK_HEIGHT;
+		yPos += BRICK_Y;
 	}	
 }
 
-function drawText(x, y, string, color){
+function layout2(){ //Create the brick objects
+	var yPos = 2;
+	var xPos = 2;
+	var hp=2;
+		
+	for(var colCounter=0; colCounter < 10; colCounter++){
+		brick.push(new Brick(xPos, yPos, hp));
+		xPos += BRICK_X;
+	}
+	
+	yPos = 2+BRICK_Y;
+ 	for(var rowCounter=0; rowCounter < 6; rowCounter++) {
+		xPos = 2;
+		for(var colCounter=0; colCounter < 2; colCounter++){
+			brick.push(new Brick(xPos, yPos, hp));
+			xPos += BRICK_X*9;
+		}
+		yPos += BRICK_Y;
+	}
+	
+	xPos = 2;
+	for(var colCounter=0; colCounter < 10; colCounter++){
+		brick.push(new Brick(xPos, yPos, hp));
+		xPos += BRICK_X;
+	}
+	
+	hp = 1;
+	yPos = 2+BRICK_Y*2;
+	for(var rowCounter=0; rowCounter < 4; rowCounter++) {
+		xPos = 2+BRICK_X*2+(BRICK_X*(rowCounter%2));
+		for(var colCounter=0; colCounter < 3; colCounter++){
+			brick.push(new Brick(xPos, yPos, hp));
+			xPos += BRICK_X*2;
+		}
+		yPos += BRICK_Y;
+	}
+	
+}
+
+function drawText(x, y, string, color){ //Draw text
 	draw.fillStyle = color;
 	draw.font = "20px _sans";
 	draw.baseline = "top";
@@ -364,6 +444,10 @@ function updateScore(){ //Update the score
 
 function updateLives(){ //Update the lives
 	livesLabel.innerHTML = "Lives: " + lives.toString();
+}
+
+function updateLevel(){ //Update the level
+	levelLabel.innerHTML = "Level: " + (level+1).toString();
 }
 
 function toggleCheat(){ //Toggle the cheats on and off
@@ -424,8 +508,8 @@ Paddle.prototype.updateY = function(y){
 
 var Ball = function(){ //The ball object
 	//Velocity of the ball;
-	this.velX = BALL_START_VELX;
-	this.velY = BALL_START_VELY;
+	this.velX = 1;
+	this.velY = -3;
 	//Properties of the ball
 	this.radius = BALL_RADIUS;
 };
