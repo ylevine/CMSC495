@@ -1,7 +1,7 @@
 const VIEWPORT_WIDTH = 640; //Viewport width
 const VIEWPORT_HEIGHT = 480; //Viewport height
 const VIEWPORT_COLOR = "#000000";
-const FRAMES_PER_MILLISECOND = 10; //How often the render function is called
+const MILLISECONDS_PER_FRAME = 10; //How often the render function is called
 //Starting values of graphics entities
 //Paddle
 const PADDLE_WIDTH = 75; //Width of the paddle
@@ -71,7 +71,7 @@ function startGame(){ //Start the game
 		if(gameOver) {
 			initObjects();
 		}
-		gameLoopHandle = setInterval(gameLoop, FRAMES_PER_MILLISECOND); //Start the rendering loop and get its handle
+		gameLoopHandle = setInterval(gameLoop, MILLISECONDS_PER_FRAME); //Start the rendering loop and get its handle
 		running = true;
 	}
 }
@@ -509,7 +509,7 @@ Paddle.prototype.updateY = function(y){
 var Ball = function(){ //The ball object
 	//Velocity of the ball;
 	this.velX = 1;
-	this.velY = -3;
+	this.velY = -BALL_MIN_VEL;
 	//Properties of the ball
 	this.radius = BALL_RADIUS;
 };
