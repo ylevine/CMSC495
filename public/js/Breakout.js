@@ -22,7 +22,12 @@ const BRICK_PADDING = 4;
 const BRICK_X = BRICK_WIDTH + BRICK_PADDING;
 const BRICK_Y = BRICK_HEIGHT + BRICK_PADDING;
 const BRICK_COLORS = ["#107EDE","#FFFF00","#FF0000"];
-const BRICK_LAYOUTS = [layout1, layout2];
+//Brick Layouts
+var layout1 = [[1,2,2],[1,3,0],[1,4,1],[1,5,2],[1,6,0],[1,7,1],[2,2,2],[2,3,0],[2,4,1],[2,5,2],[2,6,0],[2,7,1],[3,2,2],[3,3,0],[3,4,1],[3,5,2],[3,6,0],[3,7,1],[4,2,2],[4,3,0],[4,4,1],[4,5,2],[4,6,0],[4,7,1],[5,2,2],[5,3,0],[5,4,1],[5,5,2],[5,6,0],[5,7,1],[6,2,2],[6,3,0],[6,4,1],[6,5,2],[6,6,0],[6,7,1],[7,2,2],[7,3,0],[7,4,1],[7,5,2],[7,6,0],[7,7,1],[8,2,2],[8,3,0],[8,4,1],[8,5,2],[8,6,0],[8,7,1]];
+var layout2 = [[0,0,0],[0,1,0],[0,2,0],[0,3,0],[0,4,0],[0,5,0],[0,6,0],[0,7,0],[1,0,2],[1,7,2],[2,0,2],[2,2,1],[2,4,1],[2,7,2],[3,0,2],[3,3,1],[3,5,1],[3,7,2],[4,0,2],[4,2,1],[4,4,1],[4,7,2],[5,0,2],[5,3,1],[5,5,1],[5,7,2],[6,0,2],[6,2,1],[6,4,1],[6,7,2],[7,0,2],[7,3,1],[7,5,1],[7,7,2],[8,0,2],[8,7,2],[9,0,0],[9,1,0],[9,2,0],[9,3,0],[9,4,0],[9,5,0],[9,6,0],[9,7,0]];
+var layout3 = [[0,0,2],[0,7,2],[1,1,2],[1,6,2],[2,2,2],[2,3,0],[2,4,0],[2,5,2],[3,2,1],[3,3,1],[3,4,1],[3,5,1],[4,2,1],[4,3,1],[4,4,1],[4,5,1],[5,2,1],[5,3,1],[5,4,1],[5,5,1],[6,2,1],[6,3,1],[6,4,1],[6,5,1],[7,2,2],[7,3,0],[7,4,0],[7,5,2],[8,1,2],[8,6,2],[9,0,2],[9,7,2]];
+
+const BRICK_LAYOUTS = [layout1, layout2, layout3];
 
 //Objects for handling the game
 var draw; //Raster object for drawing
@@ -46,7 +51,6 @@ var running = false;
 var CHEAT_ON = false; //Cheats to make things easier
 var maxBallVel; //The maximum velocity of the ball
 var lastBrickIndex; //The index of the last brick hit by the ball
-
 
 window.addEventListener("load", windowLoaded, false);
 
@@ -339,80 +343,12 @@ function calcDistance(x1, x2, y1, y2){ //Calculate the distance of two objects
 }
 
 function createBricks(){ //Select and create the brick layout
-	BRICK_LAYOUTS[(level%BRICK_LAYOUTS.length)]();
-}
-
-function layout0(){ //Create the brick objects - test layout, not used
-	var yPos = 2;
-	var hp=0;
+	var brickLayout = BRICK_LAYOUTS[level%BRICK_LAYOUTS.length];
 	
-	for(var rowCounter=0; rowCounter < 8; rowCounter ++){
-		var xPos = 2;
-		
-		for(var colCounter=0; colCounter < 10; colCounter++){
-			brick.push(new Brick(xPos, yPos, hp));
-			xPos += BRICK_X;
-		}
-		
-		yPos += BRICK_Y;
-	}	
-}
-
-function layout1(){ //Create the brick objects
-	var yPos = 2 + BRICK_Y*2;
-	var hp=0;
-	
-	for(var rowCounter=0; rowCounter < 6; rowCounter++){
-		
-		var xPos = 2 + BRICK_X;
-		hp=(rowCounter+2)%3;
-		
-		for(var colCounter=0; colCounter < 8; colCounter++){
-			brick.push(new Brick(xPos, yPos, hp));
-			xPos += BRICK_X;
-		}
-		
-		yPos += BRICK_Y;
-	}	
-}
-
-function layout2(){ //Create the brick objects
-	var yPos = 2;
-	var xPos = 2;
-	var hp=2;
-		
-	for(var colCounter=0; colCounter < 10; colCounter++){
-		brick.push(new Brick(xPos, yPos, hp));
-		xPos += BRICK_X;
+	for(var i = 0; i< brickLayout.length; i++) {
+		var currBrick = brickLayout[i];
+		brick.push(new Brick(2+currBrick[0]*BRICK_X, 2+currBrick[1]*BRICK_Y, currBrick[2]));
 	}
-	
-	yPos = 2+BRICK_Y;
- 	for(var rowCounter=0; rowCounter < 6; rowCounter++) {
-		xPos = 2;
-		for(var colCounter=0; colCounter < 2; colCounter++){
-			brick.push(new Brick(xPos, yPos, hp));
-			xPos += BRICK_X*9;
-		}
-		yPos += BRICK_Y;
-	}
-	
-	xPos = 2;
-	for(var colCounter=0; colCounter < 10; colCounter++){
-		brick.push(new Brick(xPos, yPos, hp));
-		xPos += BRICK_X;
-	}
-	
-	hp = 1;
-	yPos = 2+BRICK_Y*2;
-	for(var rowCounter=0; rowCounter < 4; rowCounter++) {
-		xPos = 2+BRICK_X*2+(BRICK_X*(rowCounter%2));
-		for(var colCounter=0; colCounter < 3; colCounter++){
-			brick.push(new Brick(xPos, yPos, hp));
-			xPos += BRICK_X*2;
-		}
-		yPos += BRICK_Y;
-	}
-	
 }
 
 function drawText(x, y, string, color){ //Draw text
