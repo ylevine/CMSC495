@@ -1,5 +1,4 @@
-table{
-	border-collapse: collapse;
+.score_table{
 
 }
 
@@ -21,7 +20,7 @@ thead{
 th,
 td {
 	font-size: .875em;
-	padding: .5em .75em;
+	padding: .5em 6.5em;
 	border: 1px solid #000;
 
 }
