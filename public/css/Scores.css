@@ -1,0 +1,36 @@
+table{
+	border-collapse: collapse;
+
+}
+
+caption{
+
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-bottom: .5em;
+
+}
+
+thead{
+
+	font-size 1.5em;
+	font-weight: bold;
+	margin-bottom: .25em;
+}
+
+th,
+td {
+	font-size: .875em;
+	padding: .5em .75em;
+	border: 1px solid #000;
+
+}
+
+td{
+
+
+}
+
+tbody{
+
+}
