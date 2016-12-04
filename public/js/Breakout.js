@@ -96,12 +96,43 @@ function gameEnded(){ //End the game due to a condition
 	}
 	else if (--lives == 0) {
 		drawText(270, 240, "Game Over", "#FF0000");
+		checkScore();
 	}
 	else {
 		drawText(280, 240, "Lives: "+lives, "#FFFFFF");
 	}
 	updateLives();
 	stopGame();		
+}
+
+function checkScore() { //check if the player's score is higher than lowest score in the database
+
+	//get index of first score less than the player's score
+	//if index < 10 then
+		//var name = getName();
+		//addHighScore(index, name);
+	
+}
+
+function getName() { //get the palyer's name
+	var name;
+	var pattern = /^[a-z|A-Z]+$/;
+	var pText = "New high score!\nPlease enter your name.";
+	
+	do {
+		name = prompt(pText);
+		pText = "Invalid input, your name may not contain numbers or special characters.";
+		
+	} while (!pattern.test(name));
+	
+	return name;
+}
+
+function addHighScore(index, name) { //Add the player's score to the selected index in the high score table
+
+	//remove last score
+	//insert new score at selected index
+	
 }
 
 function newGame(){ //Setup a new game
