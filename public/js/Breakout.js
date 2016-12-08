@@ -133,6 +133,23 @@ function addHighScore(index, name) { //Add the player's score to the selected in
 	//remove last score
 	//insert new score at selected index
 	
+	//Create the JSON object *** These parameters currently are not correct and will need to be changed to match the server. 
+	var userScore ={
+		userName: name.val(),
+		userScore: score.val()						
+	};
+	
+	//Send the score to the server 
+	$.ajax({
+		type: "POST",
+		url: "http://localhost:3000", //Change this if using web address
+		type: "json",
+		data: userScore,
+		success: function (){
+			//Notify the score has been successfully submitted.
+			alert("Score Submitted."); //This is optional and can be removed; mostly for test purposes. 
+		} 
+	});
 }
 
 function newGame(){ //Setup a new game
