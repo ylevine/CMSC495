@@ -143,7 +143,7 @@ function addHighScore(index, name) { //Add the player's score to the selected in
 	$.ajax({
 		type: "POST",
 		url: "http://ec2-35-165-233-39.us-west-2.compute.amazonaws.com:3000/api", //Change this if using web address..
-		type: "json",
+		dataType: "json",
 		data: userScore,
 		success: function (){
 			//Notify the score has been successfully submitted.
