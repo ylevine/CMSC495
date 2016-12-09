@@ -135,14 +135,14 @@ function addHighScore(index, name) { //Add the player's score to the selected in
 	
 	//Create the JSON object *** These parameters currently are not correct and will need to be changed to match the server. 
 	var userScore ={
-		userName: name.val(),
-		userScore: score.val()						
+		name: name.val(),
+		score: score.val()
 	};
 	
 	//Send the score to the server 
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:3000", //Change this if using web address
+		url: "http://ec2-35-165-233-39.us-west-2.compute.amazonaws.com:3000/api", //Change this if using web address..
 		type: "json",
 		data: userScore,
 		success: function (){
