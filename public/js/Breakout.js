@@ -105,19 +105,17 @@ function gameEnded(){ //End the game due to a condition
 	stopGame();		
 }
 
-function checkScore() { //check if the player's score is higher than lowest score in the database
+function checkScore() { //get the players name and add their score to the high score database
 
-	//get index of first score less than the player's score
-	//if index < 10 then
-		var name = getName();
-		addHighScore(name);
+	var name = getName();
+	addHighScore(name);
 	
 }
 
-function getName() { //get the palyer's name
+function getName() { //get the player's name
 	var name;
 	var pattern = /^[a-z|A-Z]+$/;
-	var pText = "New high score!\nPlease enter your name.";
+	var pText = "Game Over.\nPlease enter your name.";
 	
 	do {
 		name = prompt(pText);
@@ -128,10 +126,7 @@ function getName() { //get the palyer's name
 	return name;
 }
 
-function addHighScore( name) { //Add the player's score to the score table
-
-	//remove last score
-	//insert new score at selected index
+function addHighScore(name) { //Add the player's score to the score table
 	
 	//Create the JSON object *** These parameters currently are not correct and will need to be changed to match the server. 
 	var userScore ={
@@ -148,7 +143,6 @@ function addHighScore( name) { //Add the player's score to the score table
 		complete: function (){ //hide the fact that it failed until error handling is added
 			//Notify the score has been successfully submitted.
 			alert("Score Submitted."); //This is optional and can be removed; mostly for test purposes.
-			initObjects();
 		} 
 	});
 }
