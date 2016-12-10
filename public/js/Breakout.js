@@ -109,8 +109,8 @@ function checkScore() { //check if the player's score is higher than lowest scor
 
 	//get index of first score less than the player's score
 	//if index < 10 then
-		//var name = getName();
-		//addHighScore(index, name);
+		var name = getName();
+		addHighScore(name);
 	
 }
 
@@ -128,15 +128,15 @@ function getName() { //get the palyer's name
 	return name;
 }
 
-function addHighScore(index, name) { //Add the player's score to the selected index in the high score table
+function addHighScore( name) { //Add the player's score to the score table
 
 	//remove last score
 	//insert new score at selected index
 	
 	//Create the JSON object *** These parameters currently are not correct and will need to be changed to match the server. 
 	var userScore ={
-		name: name.val(),
-		score: score.val()
+		name: name,
+		score: score
 	};
 	
 	//Send the score to the server 
@@ -145,9 +145,10 @@ function addHighScore(index, name) { //Add the player's score to the selected in
 		url: "http://ec2-35-165-233-39.us-west-2.compute.amazonaws.com:3000/api", //Change this if using web address..
 		dataType: "json",
 		data: userScore,
-		success: function (){
+		complete: function (){ //hide the fact that it failed until error handling is added
 			//Notify the score has been successfully submitted.
-			alert("Score Submitted."); //This is optional and can be removed; mostly for test purposes. 
+			alert("Score Submitted."); //This is optional and can be removed; mostly for test purposes.
+			initObjects();
 		} 
 	});
 }
