@@ -108,7 +108,9 @@ function gameEnded(){ //End the game due to a condition
 function checkScore() { //get the players name and add their score to the high score database
 
 	var name = getName();
-	addHighScore(name);
+	if (name != null) {
+			addHighScore(name);
+	}
 	
 }
 
