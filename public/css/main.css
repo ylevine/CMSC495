@@ -43,26 +43,6 @@ h3{
 	text-align: center;
 }
 
-h4{
-	font: 125% Arial, Arial Black , Geneva, sans-serif;
-	color: rgba(0, 20, 255, 1.0);
-	text-align: left;
-	font-weight: bold;
-}
-
-h5{
-	font: 100% Arial, Arial Black , Geneva, sans-serif;
-	color: rgba(0, 20, 255, 1.0);
-	text-align: left;
-	
-	
-}
-
-h6{
-	font: 90% Arial, Arial Black , Geneva, sans-serif;
-	text-align: left;
-}
-
 .liquid_wrapper{
 	background-color: rgba(30, 217, 155, 0.7);
 	color: #FFFFFF;
@@ -92,12 +72,18 @@ h6{
 .helpSection{
 	padding-top: 10px;
 	padding-bottom: 10px;	
-    overflow: hidden;
+    	overflow: hidden;
+}
+.credits{
+	padding-top: 10px;
+	padding-bottom: 10px;	
+    	overflow: hidden;
+    	text-align: left;
 }
 .imgLeft{
 	float: left;
 	display: block;
-	margin-right: 10px;		
+	margin-right: 30px;		
 }
 .imgDescription{
 	overflow: hidden;
