@@ -16,6 +16,8 @@ NOTE:  Please reference the .gitignore file for the relevant files that should n
 }
 ```
 * On your command line, go to the base project directory and run  ``npm install``
+* If you are running locally you will need to change the url for the AJAX requests in ``score.js`` and ``Breakout.js``
+so that they point to you local DB & project instance
 * When completed, run ``npm start`` to run the project on port 3000 (you can change the port via environment variables if so desired)
 * Enjoy ~
 
