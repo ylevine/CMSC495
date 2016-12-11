@@ -49,6 +49,7 @@ var gameOver = false;
 var gameWon = false;
 var running = false;
 var CHEAT_ON = false; //Cheats to make things easier
+var cheatsUsed;
 var maxBallVel; //The maximum velocity of the ball
 var lastBrickIndex; //The index of the last brick hit by the ball
 
@@ -107,9 +108,11 @@ function gameEnded(){ //End the game due to a condition
 
 function checkScore() { //get the players name and add their score to the high score database
 
-	var name = getName();
-	if (name != null) {
+	if (!cheatsUsed) {
+		var name = getName();
+		if (name != null) {
 			addHighScore(name);
+		}
 	}
 	
 }
@@ -169,6 +172,7 @@ function newGame(){ //Setup a new game
 	score = 0;
 	lives = 3;
 	level = 0;
+	cheatsUsed = CHEAT_ON;
 	
 	newLevel();
 	
@@ -442,6 +446,7 @@ function toggleCheat(){ //Toggle the cheats on and off
 	else{
 		button.value = "Disable Cheats";
 		CHEAT_ON = true;
+		cheatsUsed = true;
 	}	
 }
 
